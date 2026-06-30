@@ -1,0 +1,1389 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>HyperBrowseComp</title>
+  <style>
+    :root {
+      --bg: #fff7f5;
+      --paper: #ffffff;
+      --ink: #1d0b10;
+      --muted: #735d60;
+      --line: #ead5d7;
+      --line-strong: #d6a8ad;
+      --teal: #d11f36;
+      --red: #8f1424;
+      --plum: #3b0b13;
+      --gold: #ef6a32;
+      --green: #a7283a;
+      --shadow: 0 18px 44px rgba(91, 17, 26, 0.12);
+      --max: 1180px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.55;
+      letter-spacing: 0;
+    }
+
+    a {
+      color: inherit;
+      text-decoration-color: rgba(209, 31, 54, 0.4);
+      text-underline-offset: 0.18em;
+    }
+
+    button {
+      font: inherit;
+    }
+
+    .site-header {
+      border-bottom: 1px solid var(--line);
+      background: rgba(255, 247, 245, 0.92);
+      backdrop-filter: blur(16px);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .nav {
+      width: min(100% - 32px, var(--max));
+      min-height: 62px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 700;
+    }
+
+    .brand-mark {
+      width: 30px;
+      height: 30px;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--ink);
+      border-radius: 50%;
+      font-size: 14px;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 22px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    main {
+      overflow: hidden;
+    }
+
+    .hero {
+      width: min(100% - 32px, var(--max));
+      margin: 0 auto;
+      padding: 72px 0 54px;
+    }
+
+    .hero-grid {
+      max-width: 920px;
+    }
+
+    h1 {
+      margin: 0;
+      max-width: 850px;
+      font-size: clamp(58px, 10vw, 132px);
+      line-height: 0.93;
+      font-weight: 650;
+      letter-spacing: 0;
+    }
+
+    .hero-copy {
+      max-width: 760px;
+      margin: 26px 0 0;
+      color: #48212a;
+      font-size: clamp(19px, 2.2vw, 27px);
+      line-height: 1.26;
+    }
+
+    .section {
+      border-top: 1px solid var(--line);
+      padding: 70px 0;
+    }
+
+    .section-inner {
+      width: min(100% - 32px, var(--max));
+      margin: 0 auto;
+    }
+
+    .section-heading {
+      margin-bottom: 24px;
+    }
+
+    .section-heading h2 {
+      margin: 0;
+      font-size: clamp(28px, 3.4vw, 46px);
+      line-height: 1.05;
+      font-weight: 620;
+      letter-spacing: 0;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--line-strong);
+      scrollbar-width: thin;
+    }
+
+    .tab-button {
+      min-width: 144px;
+      min-height: 42px;
+      border: 1px solid var(--line-strong);
+      background: transparent;
+      color: var(--muted);
+      border-radius: 999px;
+      padding: 8px 16px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background 160ms ease, color 160ms ease, border-color 160ms ease;
+    }
+
+    .tab-button:hover,
+    .tab-button:focus-visible {
+      color: var(--ink);
+      border-color: var(--ink);
+      outline: none;
+    }
+
+    .tab-button[aria-selected="true"] {
+      background: var(--ink);
+      border-color: var(--ink);
+      color: var(--paper);
+    }
+
+    .examples-shell {
+      border: 1px solid var(--line-strong);
+      border-radius: 8px;
+      background: #240d13;
+      padding: 18px;
+      box-shadow: var(--shadow);
+    }
+
+    .example-panel {
+      min-height: 520px;
+      display: grid;
+      grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+      gap: 34px;
+      padding: 28px 20px 20px;
+      background: rgba(255, 250, 248, 0.94);
+      border: 1px solid rgba(214, 168, 173, 0.78);
+      border-top: 0;
+    }
+
+    .qa-stack {
+      display: grid;
+      gap: 20px;
+    }
+
+    .question-block,
+    .answer-block,
+    .route-block {
+      border-top: 1px solid var(--line-strong);
+      padding-top: 18px;
+    }
+
+    .block-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 12px;
+    }
+
+    .label {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      text-transform: uppercase;
+    }
+
+    .answer-block .label,
+    .route-block .label {
+      margin-bottom: 14px;
+    }
+
+    .language-toggle {
+      display: inline-grid;
+      grid-template-columns: 1fr 1fr;
+      border: 1px solid var(--line-strong);
+      border-radius: 999px;
+      overflow: hidden;
+      background: rgba(255, 250, 248, 0.75);
+    }
+
+    .language-toggle button {
+      min-width: 82px;
+      min-height: 30px;
+      border: 0;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 12px;
+      padding: 4px 10px;
+    }
+
+    .language-toggle button:hover,
+    .language-toggle button:focus-visible {
+      color: var(--ink);
+      outline: none;
+    }
+
+    .language-toggle button[aria-pressed="true"] {
+      background: var(--ink);
+      color: var(--paper);
+    }
+
+    .language-note {
+      margin: 0;
+      border-left: 3px solid var(--teal);
+      background: #fff1ee;
+      color: #5b252d;
+      padding: 9px 11px;
+      font-size: 13px;
+      line-height: 1.35;
+    }
+
+    .question-text {
+      margin: 0;
+      color: #2b1117;
+      font-size: clamp(16px, 1.55vw, 21px);
+      line-height: 1.42;
+    }
+
+    .answer-text {
+      margin: 0;
+      color: var(--ink);
+      font-size: clamp(18px, 1.8vw, 24px);
+      line-height: 1.32;
+      font-weight: 620;
+      letter-spacing: 0;
+    }
+
+    .route-list {
+      display: grid;
+      gap: 6px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .route-list li {
+      display: grid;
+      grid-template-columns: 32px minmax(0, 1fr);
+      gap: 10px;
+      align-items: center;
+      min-height: 43px;
+      border: 1px solid rgba(214, 168, 173, 0.86);
+      background: rgba(255, 250, 248, 0.86);
+      padding: 6px 9px;
+      color: #3d1b22;
+      cursor: pointer;
+      transition: background 150ms ease, border-color 150ms ease;
+    }
+
+    .route-list li:hover,
+    .route-list li:focus-visible,
+    .route-list li.is-active {
+      background: #fff0ed;
+      border-color: var(--teal);
+      outline: none;
+    }
+
+    .route-icon {
+      width: 30px;
+      height: 30px;
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(29, 11, 16, 0.16);
+      border-radius: 50%;
+      color: var(--paper);
+      background: var(--teal);
+    }
+
+    .route-list li:nth-child(2) .route-icon {
+      background: var(--red);
+    }
+
+    .route-list li:nth-child(3) .route-icon {
+      background: var(--plum);
+    }
+
+    .route-list li:nth-child(4) .route-icon {
+      background: var(--gold);
+    }
+
+    .route-list li:nth-child(5) .route-icon {
+      background: var(--green);
+    }
+
+    .route-icon svg {
+      width: 15px;
+      height: 15px;
+      stroke-width: 2;
+    }
+
+    .route-copy {
+      display: block;
+    }
+
+    .route-copy strong {
+      font-size: 12.5px;
+      line-height: 1.25;
+      color: var(--ink);
+    }
+
+    .route-preview {
+      min-height: 270px;
+      aspect-ratio: 16 / 9;
+      position: relative;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      margin-top: 14px;
+      border: 1px dashed var(--line-strong);
+      background: #fff3f0;
+    }
+
+    .route-preview::before,
+    .route-preview::after {
+      content: "";
+      position: absolute;
+      pointer-events: none;
+    }
+
+    .route-preview::before {
+      inset: 26px 32px;
+      border: 1px solid rgba(209, 31, 54, 0.18);
+      background: linear-gradient(135deg, rgba(209, 31, 54, 0.1), rgba(255, 255, 255, 0.88));
+    }
+
+    .route-preview::after {
+      width: 70%;
+      height: 1px;
+      left: 15%;
+      top: 50%;
+      background: rgba(209, 31, 54, 0.28);
+      transform: rotate(-10deg);
+    }
+
+    .route-preview-icon {
+      width: 54px;
+      height: 54px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--teal);
+      color: var(--paper);
+      position: relative;
+      z-index: 1;
+      box-shadow: 0 12px 24px rgba(209, 31, 54, 0.22);
+    }
+
+    .route-preview-image {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      display: none;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      background: var(--paper);
+    }
+
+    .route-preview.has-image {
+      border-style: solid;
+      background: var(--paper);
+    }
+
+    .route-preview.has-image::before,
+    .route-preview.has-image::after {
+      display: none;
+    }
+
+    .route-preview.has-image .route-preview-image {
+      display: block;
+    }
+
+    .route-preview.has-image .route-preview-icon {
+      display: none;
+    }
+
+    .route-preview-icon svg {
+      width: 25px;
+      height: 25px;
+      stroke-width: 2;
+    }
+
+    .route-preview[data-kind="video"]::before {
+      inset: 34px 30px;
+      border-radius: 6px;
+      background:
+        linear-gradient(90deg, rgba(29, 11, 16, 0.1) 0 22%, transparent 22% 100%),
+        linear-gradient(135deg, rgba(209, 31, 54, 0.16), rgba(255, 255, 255, 0.92));
+    }
+
+    .route-preview[data-kind="pin"] {
+      background:
+        linear-gradient(90deg, transparent 0 45%, rgba(209, 31, 54, 0.1) 45% 55%, transparent 55% 100%),
+        #fff3f0;
+    }
+
+    .route-preview[data-kind="map"] {
+      background:
+        linear-gradient(rgba(209, 31, 54, 0.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(209, 31, 54, 0.08) 1px, transparent 1px),
+        #fff3f0;
+      background-size: 22px 22px;
+    }
+
+    .route-preview[data-kind="archive"]::before {
+      inset: 28px 38px;
+      background:
+        linear-gradient(#f0d1d4 0 8px, transparent 8px 15px),
+        linear-gradient(#f0d1d4 0 8px, transparent 8px 15px),
+        linear-gradient(#f0d1d4 0 8px, transparent 8px 15px),
+        #ffffff;
+      background-position: 16px 18px, 16px 42px, 16px 66px, 0 0;
+      background-repeat: no-repeat;
+      background-size: calc(100% - 32px) 15px, calc(78% - 32px) 15px, calc(88% - 32px) 15px, 100% 100%;
+    }
+
+    .route-preview[data-kind="pin"] .route-preview-icon {
+      background: var(--red);
+    }
+
+    .route-preview[data-kind="map"] .route-preview-icon {
+      background: var(--plum);
+    }
+
+    .route-preview[data-kind="archive"] .route-preview-icon {
+      background: var(--gold);
+    }
+
+    .results-layout {
+      display: grid;
+      gap: 10px;
+      border-top: 1px solid var(--line-strong);
+      padding-top: 18px;
+    }
+
+    .comparison-header,
+    .comparison-row {
+      display: grid;
+      grid-template-columns: minmax(140px, 0.85fr) minmax(320px, 2.2fr) minmax(150px, 0.9fr);
+      gap: 22px;
+      align-items: center;
+    }
+
+    .comparison-header {
+      color: var(--muted);
+      font-size: 13px;
+      text-transform: uppercase;
+    }
+
+    .comparison-row {
+      min-height: 112px;
+      border-bottom: 1px solid var(--line);
+      padding: 16px 0;
+    }
+
+    .model-name {
+      color: #3a151c;
+      font-weight: 600;
+    }
+
+    .bar-track {
+      height: 14px;
+      border: 1px solid var(--line-strong);
+      background: rgba(255, 250, 248, 0.88);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      display: block;
+      height: 100%;
+      width: var(--bar-width, 0%);
+      background: linear-gradient(90deg, var(--teal), #ff6b5f);
+    }
+
+    .bar-fill.tool {
+      background: linear-gradient(90deg, #3b0b13, #a7283a);
+    }
+
+    .bar-fill.pending {
+      width: 18%;
+      background: repeating-linear-gradient(
+        135deg,
+        #f0c9cd,
+        #f0c9cd 8px,
+        #fff0ed 8px,
+        #fff0ed 16px
+      );
+    }
+
+    .chart-cell {
+      display: grid;
+      gap: 9px;
+    }
+
+    .chart-bar {
+      display: grid;
+      grid-template-columns: 92px minmax(0, 1fr) 48px;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .chart-label {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .chart-axis {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      color: var(--muted);
+      font-size: 11px;
+      padding-left: 104px;
+      line-height: 1;
+    }
+
+    .chart-axis span:not(:first-child) {
+      text-align: right;
+    }
+
+    .score-value,
+    .cost-value {
+      color: var(--ink);
+      font-weight: 620;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .cost-cell {
+      display: grid;
+      gap: 5px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .highlight-grid {
+      display: grid;
+      gap: 0;
+    }
+
+    .highlight-intro {
+      max-width: 860px;
+      margin: -8px 0 30px;
+      color: #4a2229;
+      font-size: clamp(18px, 2vw, 24px);
+      line-height: 1.42;
+    }
+
+    .highlight-item {
+      border-top: 1px solid var(--line-strong);
+      padding: 34px 0;
+    }
+
+    .highlight-item h3 {
+      margin: 0 0 12px;
+      color: var(--ink);
+      font-size: clamp(24px, 3vw, 36px);
+      line-height: 1.08;
+      font-weight: 620;
+      letter-spacing: 0;
+    }
+
+    .highlight-item p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 17px;
+      line-height: 1.52;
+    }
+
+    .highlight-copy {
+      display: grid;
+      gap: 14px;
+    }
+
+    .language-coverage {
+      display: grid;
+      grid-template-columns: 190px minmax(0, 1fr);
+      gap: 22px;
+      align-items: center;
+      margin-top: 8px;
+    }
+
+    .pie-chart {
+      width: 180px;
+      aspect-ratio: 1;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at center, var(--paper) 0 43%, transparent 44%),
+        conic-gradient(
+          #d11f36 0deg 24deg,
+          #8f1424 24deg 48deg,
+          #ef6a32 48deg 72deg,
+          #3b0b13 72deg 96deg,
+          #a7283a 96deg 120deg,
+          #f59e0b 120deg 144deg,
+          #fb7185 144deg 168deg,
+          #7f1d1d 168deg 192deg,
+          #b45309 192deg 216deg,
+          #e11d48 216deg 240deg,
+          #9f1239 240deg 264deg,
+          #f97316 264deg 288deg,
+          #6b1020 288deg 312deg,
+          #dc2626 312deg 336deg,
+          #f3c7c9 336deg 360deg
+        );
+      border: 1px solid var(--line-strong);
+      display: grid;
+      place-items: center;
+      text-align: center;
+      color: var(--ink);
+      font-weight: 700;
+      box-shadow: inset 0 0 0 10px rgba(255, 255, 255, 0.55);
+    }
+
+    .coverage-legend {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 9px 14px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .coverage-legend li {
+      display: grid;
+      grid-template-columns: 12px minmax(0, 1fr);
+      gap: 10px;
+      align-items: center;
+    }
+
+    .legend-swatch {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #d11f36;
+    }
+
+    .legend-swatch.l2 {
+      background: #8f1424;
+    }
+
+    .legend-swatch.l3 {
+      background: #ef6a32;
+    }
+
+    .legend-swatch.l4 {
+      background: #3b0b13;
+    }
+
+    .legend-swatch.l5 {
+      background: #a7283a;
+    }
+
+    .legend-swatch.l6 {
+      background: #f59e0b;
+    }
+
+    .legend-swatch.l7 {
+      background: #fb7185;
+    }
+
+    .legend-swatch.l8 {
+      background: #7f1d1d;
+    }
+
+    .legend-swatch.l9 {
+      background: #b45309;
+    }
+
+    .legend-swatch.l10 {
+      background: #e11d48;
+    }
+
+    .legend-swatch.l11 {
+      background: #9f1239;
+    }
+
+    .legend-swatch.l12 {
+      background: #f97316;
+    }
+
+    .legend-swatch.l13 {
+      background: #6b1020;
+    }
+
+    .legend-swatch.l14 {
+      background: #dc2626;
+    }
+
+    .legend-swatch.l15 {
+      background: #f3c7c9;
+    }
+
+    .footer {
+      border-top: 1px solid var(--line);
+      padding: 32px 0 42px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .footer-inner {
+      width: min(100% - 32px, var(--max));
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    @media (max-width: 900px) {
+      .nav {
+        min-height: 58px;
+      }
+
+      .nav-links {
+        gap: 14px;
+      }
+
+      .hero {
+        padding-top: 46px;
+      }
+
+      .results-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .example-panel {
+        min-height: auto;
+        gap: 34px;
+      }
+
+      .examples-shell {
+        padding: 14px;
+      }
+
+      .language-coverage {
+        grid-template-columns: 180px minmax(0, 1fr);
+      }
+
+      .coverage-legend {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 760px) {
+      .example-panel {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 620px) {
+      .site-header {
+        position: static;
+      }
+
+      .nav {
+        align-items: flex-start;
+        flex-direction: column;
+        padding: 14px 0;
+        gap: 10px;
+      }
+
+      .nav-links {
+        width: 100%;
+        overflow-x: auto;
+        padding-bottom: 4px;
+      }
+
+      .hero {
+        padding-top: 34px;
+      }
+
+      h1 {
+        font-size: clamp(48px, 17vw, 76px);
+      }
+
+      .section {
+        padding: 52px 0;
+      }
+
+      .tab-button {
+        min-width: 118px;
+      }
+
+      .examples-shell {
+        padding: 10px;
+      }
+
+      .example-panel {
+        padding: 24px 14px 14px;
+      }
+
+      .block-header {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .language-toggle {
+        width: 100%;
+      }
+
+      .route-list li {
+        grid-template-columns: 32px minmax(0, 1fr);
+        gap: 10px;
+      }
+
+      .route-icon {
+        width: 30px;
+        height: 30px;
+      }
+
+      .comparison-header {
+        display: none;
+      }
+
+      .comparison-row {
+        grid-template-columns: 1fr;
+        gap: 10px;
+        border-bottom: 1px solid var(--line);
+        padding-bottom: 12px;
+      }
+
+      .cost-cell::before {
+        color: var(--muted);
+        font-size: 12px;
+        text-transform: uppercase;
+      }
+
+      .chart-bar {
+        grid-template-columns: 72px minmax(0, 1fr) 48px;
+      }
+
+      .chart-axis {
+        padding-left: 84px;
+      }
+
+      .cost-cell::before {
+        content: "Average cost";
+      }
+
+      .language-coverage {
+        grid-template-columns: 1fr;
+      }
+
+      .coverage-legend {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <nav class="nav" aria-label="Primary">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true">H</span>
+        <span>HyperBrowseComp</span>
+      </div>
+      <div class="nav-links">
+        <a href="#examples">Examples</a>
+        <a href="#results">Results</a>
+        <a href="#dataset">Dataset</a>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero" aria-labelledby="page-title">
+      <div class="hero-grid">
+        <div>
+          <h1 id="page-title">HyperBrowseComp</h1>
+          <p class="hero-copy">
+            A multilingual, multimodal browsing benchmark for agents facing hard searches and questions beyond memorized web knowledge.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="examples" aria-labelledby="examples-title">
+      <div class="section-inner">
+        <div class="section-heading">
+          <h2 id="examples-title">Dataset Examples</h2>
+        </div>
+
+        <div class="examples-shell">
+          <div class="tabs" role="tablist" aria-label="Dataset examples">
+            <button class="tab-button" type="button" role="tab" aria-selected="true" aria-controls="example-panel" id="tab-0" data-tab="0">Example 1</button>
+            <button class="tab-button" type="button" role="tab" aria-selected="false" aria-controls="example-panel" id="tab-1" data-tab="1">Example 2</button>
+            <button class="tab-button" type="button" role="tab" aria-selected="false" aria-controls="example-panel" id="tab-2" data-tab="2">Example 3</button>
+          </div>
+
+          <article class="example-panel" id="example-panel" role="tabpanel" aria-labelledby="tab-0">
+            <div class="qa-stack">
+              <div class="question-block">
+                <div class="block-header">
+                  <p class="label">Question</p>
+                  <div class="language-toggle" aria-label="Question language">
+                    <button type="button" data-question-view="translation" aria-pressed="true">English</button>
+                    <button type="button" data-question-view="original" aria-pressed="false" id="original-language-button">Original</button>
+                  </div>
+                </div>
+                <p class="question-text" id="example-question" lang="en"></p>
+              </div>
+
+              <div class="answer-block">
+                <p class="label">Answer</p>
+                <p class="answer-text" id="example-answer"></p>
+              </div>
+
+              <p class="language-note" id="language-note"></p>
+            </div>
+
+            <div class="route-block">
+              <p class="label">Evidence route</p>
+              <ol class="route-list" id="example-route"></ol>
+              <div class="route-preview" id="route-preview" aria-label="Evidence route illustration">
+                <img class="route-preview-image" id="route-preview-image" alt="">
+                <span class="route-preview-icon" id="route-preview-icon" aria-hidden="true"></span>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="results" aria-labelledby="results-title">
+      <div class="section-inner">
+        <div class="section-heading">
+          <h2 id="results-title">Current model results</h2>
+        </div>
+
+        <div class="results-layout" aria-label="Current model comparison">
+          <div class="comparison-header" aria-hidden="true">
+            <span>Model</span>
+            <span>Accuracy by mode</span>
+            <span>Average cost</span>
+          </div>
+
+          <div class="comparison-row">
+            <span class="model-name">GPT 5.5</span>
+            <div class="chart-cell">
+              <div class="chart-bar no-tool-score">
+                <span class="chart-label">No tools</span>
+                <span class="bar-track"><span class="bar-fill pending"></span></span>
+                <span class="score-value">TBD</span>
+              </div>
+              <div class="chart-bar tool-score">
+                <span class="chart-label">Tools</span>
+                <span class="bar-track"><span class="bar-fill pending tool"></span></span>
+                <span class="score-value">TBD</span>
+              </div>
+              <div class="chart-axis" aria-hidden="true">
+                <span>0</span><span>25</span><span>50</span><span>75</span><span>100</span>
+              </div>
+            </div>
+            <span class="cost-cell">
+              <span><span class="cost-value">TBD</span> avg time</span>
+              <span><span class="cost-value">TBD</span> avg tokens</span>
+            </span>
+          </div>
+
+          <div class="comparison-row">
+            <span class="model-name">Claude 4.7</span>
+            <div class="chart-cell">
+              <div class="chart-bar no-tool-score">
+                <span class="chart-label">No tools</span>
+                <span class="bar-track"><span class="bar-fill pending"></span></span>
+                <span class="score-value">TBD</span>
+              </div>
+              <div class="chart-bar tool-score">
+                <span class="chart-label">Tools</span>
+                <span class="bar-track"><span class="bar-fill pending tool"></span></span>
+                <span class="score-value">TBD</span>
+              </div>
+              <div class="chart-axis" aria-hidden="true">
+                <span>0</span><span>25</span><span>50</span><span>75</span><span>100</span>
+              </div>
+            </div>
+            <span class="cost-cell">
+              <span><span class="cost-value">TBD</span> avg time</span>
+              <span><span class="cost-value">TBD</span> avg tokens</span>
+            </span>
+          </div>
+
+          <div class="comparison-row">
+            <span class="model-name">Gemini Pro 3.1</span>
+            <div class="chart-cell">
+              <div class="chart-bar no-tool-score">
+                <span class="chart-label">No tools</span>
+                <span class="bar-track"><span class="bar-fill pending"></span></span>
+                <span class="score-value">TBD</span>
+              </div>
+              <div class="chart-bar tool-score">
+                <span class="chart-label">Tools</span>
+                <span class="bar-track"><span class="bar-fill pending tool"></span></span>
+                <span class="score-value">TBD</span>
+              </div>
+              <div class="chart-axis" aria-hidden="true">
+                <span>0</span><span>25</span><span>50</span><span>75</span><span>100</span>
+              </div>
+            </div>
+            <span class="cost-cell">
+              <span><span class="cost-value">TBD</span> avg time</span>
+              <span><span class="cost-value">TBD</span> avg tokens</span>
+            </span>
+          </div>
+
+          <div class="comparison-row">
+            <span class="model-name">Qwen 3.6</span>
+            <div class="chart-cell">
+              <div class="chart-bar no-tool-score">
+                <span class="chart-label">No tools</span>
+                <span class="bar-track"><span class="bar-fill pending"></span></span>
+                <span class="score-value">TBD</span>
+              </div>
+              <div class="chart-bar tool-score">
+                <span class="chart-label">Tools</span>
+                <span class="bar-track"><span class="bar-fill pending tool"></span></span>
+                <span class="score-value">TBD</span>
+              </div>
+              <div class="chart-axis" aria-hidden="true">
+                <span>0</span><span>25</span><span>50</span><span>75</span><span>100</span>
+              </div>
+            </div>
+            <span class="cost-cell">
+              <span><span class="cost-value">TBD</span> avg time</span>
+              <span><span class="cost-value">TBD</span> avg tokens</span>
+            </span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="dataset" aria-labelledby="dataset-title">
+      <div class="section-inner">
+        <div class="section-heading">
+          <h2 id="dataset-title">Data highlights</h2>
+        </div>
+
+        <p class="highlight-intro">
+          The answer format is deliberately simple, but getting there is not. A strong model must judge whether online evidence is factual, decide which sources deserve trust, keep searching when the obvious query fails, and connect small clues across pages, media, and languages.
+        </p>
+
+        <div class="highlight-grid">
+          <div class="highlight-item">
+            <h3>Multilingual</h3>
+            <div class="highlight-copy">
+              <p>Unlike English-centric browsing benchmarks, HyperBrowseComp asks questions in many source languages and often requires the model to traverse resources written in different languages before it can settle on an answer.</p>
+              <p>English translations are included for ablation, reporting, and explanation, but the official benchmark prompt remains in the original language. We currently cover 15 languages and will expand coverage as the benchmark grows.</p>
+              <div class="language-coverage" aria-label="Language coverage summary">
+                <div class="pie-chart" aria-hidden="true"></div>
+                <ul class="coverage-legend">
+                  <li><span class="legend-swatch"></span><span>Indonesian</span></li>
+                  <li><span class="legend-swatch l2"></span><span>German</span></li>
+                  <li><span class="legend-swatch l3"></span><span>Korean</span></li>
+                  <li><span class="legend-swatch l4"></span><span>Japanese</span></li>
+                  <li><span class="legend-swatch l5"></span><span>Chinese</span></li>
+                  <li><span class="legend-swatch l6"></span><span>Arabic</span></li>
+                  <li><span class="legend-swatch l7"></span><span>Spanish</span></li>
+                  <li><span class="legend-swatch l8"></span><span>French</span></li>
+                  <li><span class="legend-swatch l9"></span><span>Portuguese</span></li>
+                  <li><span class="legend-swatch l10"></span><span>Hindi</span></li>
+                  <li><span class="legend-swatch l11"></span><span>Vietnamese</span></li>
+                  <li><span class="legend-swatch l12"></span><span>Thai</span></li>
+                  <li><span class="legend-swatch l13"></span><span>Turkish</span></li>
+                  <li><span class="legend-swatch l14"></span><span>Russian</span></li>
+                  <li><span class="legend-swatch l15"></span><span>Swahili</span></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="highlight-item">
+            <h3>Elevated difficulty</h3>
+            <div class="highlight-copy">
+              <p>We are strongly inspired by BrowseComp, but HyperBrowseComp pushes beyond trivia-like intersections of vague descriptions. Many tasks require locating specific information inside books, PDFs, papers, videos, official tables, maps, and other sources that are unlikely to be stored directly in model weights.</p>
+              <p>Each task still has a compact answer, but reaching it can require identifying entities, disambiguating records, calculating from data, or aggregating many small clues. The benchmark rewards careful search strategy, source selection, and final-answer verification.</p>
+            </div>
+          </div>
+          <div class="highlight-item">
+            <h3>Multimodal web navigation</h3>
+            <div class="highlight-copy">
+              <p>Beyond plain text search, HyperBrowseComp can require models to interpret or aggregate information from images, audio, video, maps, and interactive websites. A solver may need to combine a video frame, a public record, a map position, and a current storefront before the answer becomes clear.</p>
+              <p>This makes the benchmark closer to real browsing work: the relevant evidence is often distributed across modalities, interfaces, and languages, and the model must decide which tool or source is worth consulting next.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <span>HyperBrowseComp</span>
+      <span>Static preview / 2026</span>
+    </div>
+  </footer>
+
+  <script>
+    const examples = [
+      {
+        language: {
+          code: "id",
+          label: "Indonesian"
+        },
+        question: {
+          original: "Sebuah jaringan minimarket lokal Indonesia merilis beberapa video jingle pada tahun tertentu. Dalam salah satu video tersebut, ada seorang pria bernyanyi sambil mengendarai sepeda motor. Kedai kopi apa yang berada tepat di seberang cabang minimarket yang ditampilkan dalam video tersebut, per Juni 2026?",
+          translation: "A local Indonesian minimarket chain released several jingle videos in a particular year. In one of the videos, there's a guy singing while driving a motorcycle. What's the coffee shop right across the minimarket branch shown in this particular video, as per June 2026?"
+        },
+        answer: "Answer to add",
+        route: [
+          {
+            icon: "search",
+            label: "Find the campaign",
+            text: "Identify the minimarket chain and the release year for the relevant jingle videos."
+          },
+          {
+            icon: "video",
+            label: "Select the clip",
+            text: "Find the video with the motorcycle singer and isolate the branch shown on screen."
+          },
+          {
+            icon: "map",
+            label: "Locate the branch",
+            text: "Use signage, storefront geometry, road layout, and online map imagery to match the branch."
+          },
+          {
+            icon: "pin",
+            label: "Check across the street",
+            text: "Verify the coffee shop directly across from that branch as of June 2026."
+          }
+        ]
+      },
+      {
+        language: {
+          code: "de",
+          label: "Deutsch"
+        },
+        question: {
+          original: "In einem Video, in dem ein YouTuber das neue Update 1.58 von ETS2 vorstellt, fährt er durch eine Stadt, um die überarbeitete Karte zu zeigen. Dabei bemerkt er, dass die Spieleentwickler zwar korrekt ein 30er-Tempolimit-Schild an einem bestimmten Pfosten angebracht haben, wie es auch im echten Leben der Fall ist, den Gehweg jedoch fälschlicherweise nicht als Pflasterstein modelliert haben. An der entsprechenden realen Stelle, einige Meter zurück auf der linken Straßenseite, befindet sich eine Bank. Welcher fortgeführte Geschäftsbereich dieser Bank wies laut ihrem Vergütungsbericht für das Geschäftsjahr 2010 den zweithöchsten operativen Gewinn auf?",
+          translation: "In a video of a YouTuber showcasing the new 1.58 update of ETS2, he drives around a city to show its map rework. At one point, he points out that the game developers correctly placed a 30 speed-limit sign on a specific pole as in real life, but incorrectly modeled a sidewalk that should be cobblestone. At the corresponding real-life location, a few meters back on the left side of the road, there is a bank. In this bank's remuneration report for 2010, which continuing operation had the second-highest operating profit?"
+        },
+        answer: "Answer to add",
+        route: [
+          {
+            icon: "video",
+            label: "Find the source video",
+            text: "Identify the YouTube video covering the ETS2 1.58 map rework.",
+            image: "assets/hyperbrowsecomp/de-example-1.png"
+          },
+          {
+            icon: "pin",
+            label: "Isolate the exact moment",
+            text: "Find the timestamp where the creator discusses the 30 speed-limit sign and cobblestone sidewalk mismatch.",
+            image: "assets/hyperbrowsecomp/de-example-2.png"
+          },
+          {
+            icon: "map",
+            label: "Match the real location",
+            text: "Map the in-game street segment to the corresponding real-world pole, sidewalk, and road orientation.",
+            image: "assets/hyperbrowsecomp/de-example-3.png"
+          },
+          {
+            icon: "archive",
+            label: "Read the bank report",
+            text: "Identify the nearby bank, open its 2010 remuneration report, and compare operating profit across continuing operations.",
+            image: "assets/hyperbrowsecomp/de-example-4.png"
+          }
+        ]
+      },
+      {
+        language: {
+          code: "ko",
+          label: "Korean"
+        },
+        question: {
+          original: "2026년 1월 1일, 공식 기록에 따르면 이 대중교통역에서는 4,073명이 승차하고 3,918명이 하차했다. 2026년 1월 11일에는 4,968명이 승차하고 4,773명이 하차했다. 2025년 1월 한 달 동안 이 역은 비슷한 이름을 가진 앞 역과 다음 역보다 승차 인원과 하차 인원이 꾸준히 더 많았다. 2026년 1월 기준, 이 역에서 하차한 뒤 가장 가까운 공원은 어디인가?",
+          translation: "On January 1, 2026, this public transport station boarded 4073 people and disembarked 3918 people, according to official records. On January 11, 2026, this station boarded 4968 people and disembarked 4773 people. This station consistently had more people boarding and disembarking the station compared to the station previous and station after it, despite the three stations sharing similar names, on the month of January 2025. What is the nearest park after disembarking on this station, as of January 2026?"
+        },
+        answer: "Answer to add",
+        route: [
+          {
+            icon: "archive",
+            label: "Ridership match",
+            text: "Use the January 1 and January 11, 2026 official boarding and disembarking figures to identify the station."
+          },
+          {
+            icon: "train",
+            label: "Neighbor check",
+            text: "Confirm the January 2025 pattern against the similarly named previous and next stations."
+          },
+          {
+            icon: "map",
+            label: "Station context",
+            text: "Locate the correct disembarkation point and surrounding street network."
+          },
+          {
+            icon: "park",
+            label: "Nearest park",
+            text: "Find the nearest park to that station as of January 2026."
+          }
+        ]
+      }
+    ];
+
+    const routeIcons = {
+      archive: '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16"/><path d="M6 7v12h12V7"/><path d="M8 4h8l2 3H6l2-3Z"/><path d="M10 11h4"/></svg>',
+      map: '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18-6 3V6l6-3 6 3 6-3v15l-6 3-6-3Z"/><path d="M9 3v15"/><path d="M15 6v15"/></svg>',
+      park: '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21v-8"/><path d="M7 13a5 5 0 0 1 10 0"/><path d="M5 17a7 7 0 0 1 14 0"/><path d="M9 21h6"/></svg>',
+      pin: '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-5.2 7-12a7 7 0 0 0-14 0c0 6.8 7 12 7 12Z"/><circle cx="12" cy="9" r="2.5"/></svg>',
+      search: '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m16.5 16.5 4 4"/></svg>',
+      train: '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h10a3 3 0 0 1 3 3v8a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4V6a3 3 0 0 1 3-3Z"/><path d="M8 21l2-3"/><path d="M16 21l-2-3"/><path d="M4 10h16"/><circle cx="8" cy="14" r="1"/><circle cx="16" cy="14" r="1"/></svg>',
+      video: '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="13" height="12" rx="2"/><path d="m16 10 5-3v10l-5-3Z"/></svg>'
+    };
+
+    const tabs = Array.from(document.querySelectorAll("[data-tab]"));
+    const questionViewButtons = Array.from(document.querySelectorAll("[data-question-view]"));
+    const originalLanguageButton = document.querySelector("#original-language-button");
+    const panel = document.querySelector("#example-panel");
+    const question = document.querySelector("#example-question");
+    const languageNote = document.querySelector("#language-note");
+    const answer = document.querySelector("#example-answer");
+    const route = document.querySelector("#example-route");
+    const routePreview = document.querySelector("#route-preview");
+    const routePreviewImage = document.querySelector("#route-preview-image");
+    const routePreviewIcon = document.querySelector("#route-preview-icon");
+    let currentExample = 0;
+    let currentQuestionView = "translation";
+
+    function renderQuestionViewControls(example) {
+      originalLanguageButton.textContent = example.language.label;
+
+      questionViewButtons.forEach((button) => {
+        button.setAttribute("aria-pressed", String(button.dataset.questionView === currentQuestionView));
+      });
+    }
+
+    function renderRoutePreview(example, stepIndex, items = []) {
+      const step = example.route[stepIndex];
+
+      routePreview.dataset.kind = step.icon;
+      routePreviewIcon.innerHTML = routeIcons[step.icon] || routeIcons.search;
+      routePreview.classList.toggle("has-image", Boolean(step.image));
+
+      if (step.image) {
+        routePreviewImage.src = step.image;
+        routePreviewImage.alt = step.label;
+      } else {
+        routePreviewImage.removeAttribute("src");
+        routePreviewImage.alt = "";
+      }
+
+      items.forEach((item, itemIndex) => {
+        item.classList.toggle("is-active", itemIndex === stepIndex);
+      });
+    }
+
+    function renderExample(index) {
+      currentExample = index;
+      const example = examples[index];
+      question.textContent = example.question[currentQuestionView];
+      question.lang = currentQuestionView === "original" ? example.language.code : "en";
+      languageNote.textContent = `Official benchmark question is asked in ${example.language.label}. English translation is included for ablation and explanation only.`;
+      answer.textContent = example.answer;
+
+      route.replaceChildren();
+      const routeItems = [];
+      example.route.forEach((step, stepIndex) => {
+        const item = document.createElement("li");
+        const icon = document.createElement("span");
+        const copy = document.createElement("div");
+        const label = document.createElement("strong");
+
+        icon.className = "route-icon";
+        icon.innerHTML = routeIcons[step.icon] || routeIcons.search;
+        copy.className = "route-copy";
+        label.textContent = step.label;
+
+        copy.append(label);
+        item.append(icon, copy);
+        item.tabIndex = 0;
+        item.setAttribute("aria-label", `${step.label}. ${step.text}`);
+        item.addEventListener("mouseenter", () => renderRoutePreview(example, stepIndex, routeItems));
+        item.addEventListener("focus", () => renderRoutePreview(example, stepIndex, routeItems));
+        route.append(item);
+        routeItems.push(item);
+      });
+      renderRoutePreview(example, 0, routeItems);
+
+      tabs.forEach((tab, tabIndex) => {
+        const selected = tabIndex === index;
+        tab.setAttribute("aria-selected", String(selected));
+        tab.tabIndex = selected ? 0 : -1;
+      });
+      panel.setAttribute("aria-labelledby", `tab-${index}`);
+      renderQuestionViewControls(example);
+    }
+
+    tabs.forEach((tab) => {
+      tab.addEventListener("click", () => {
+        renderExample(Number(tab.dataset.tab));
+      });
+
+      tab.addEventListener("keydown", (event) => {
+        const current = tabs.indexOf(tab);
+        const next = event.key === "ArrowRight" ? current + 1 : event.key === "ArrowLeft" ? current - 1 : current;
+
+        if (next !== current) {
+          event.preventDefault();
+          const wrapped = (next + tabs.length) % tabs.length;
+          tabs[wrapped].focus();
+          renderExample(wrapped);
+        }
+      });
+    });
+
+    questionViewButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        currentQuestionView = button.dataset.questionView;
+        renderExample(currentExample);
+      });
+    });
+
+    renderExample(0);
+  </script>
+</body>
+</html>
